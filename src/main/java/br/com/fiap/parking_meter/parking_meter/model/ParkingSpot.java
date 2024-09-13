@@ -2,26 +2,35 @@ package br.com.fiap.parking_meter.parking_meter.model;
 
 import jakarta.persistence.*;
 
-import java.util.Objects;
-
 @Entity
 @Table(name = "parking_spots")
 public class ParkingSpot {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String cep;  // CEP como chave primária
-
+    private String location;  // Exemplo: número da vaga ou nome da área
     private String logradouro;  // Rua (Logradouro)
     private String bairro;
     private String cidade;
     private String estado;
     private String pais;
 
-    private String location;  // Exemplo: número da vaga ou nome da área
+
     private int quantity;  // Quantidade de vagas disponíveis
 
     public ParkingSpot () {}
 
-    public ParkingSpot(String cep, String logradouro, String bairro, String cidade, String estado, String pais, String location, int quantity) {
+    public ParkingSpot(Long id,
+                       String cep,
+                       String logradouro,
+                       String bairro,
+                       String cidade,
+                       String estado,
+                       String pais,
+                       String location,
+                       int quantity) {
+        this.id = id;
         this.cep = cep;
         this.logradouro = logradouro;
         this.bairro = bairro;
@@ -32,12 +41,28 @@ public class ParkingSpot {
         this.quantity = quantity;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getCep() {
         return cep;
     }
 
     public void setCep(String cep) {
         this.cep = cep;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getLogradouro() {
@@ -78,14 +103,6 @@ public class ParkingSpot {
 
     public void setPais(String pais) {
         this.pais = pais;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 
     public int getQuantity() {
