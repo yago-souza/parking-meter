@@ -19,6 +19,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
 
+    // Método para tratar BusinessException (ex.: duplicação de CEP)
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<Object> handleBusinessException(BusinessException ex, WebRequest request) {
+        // Cria uma resposta personalizada para duplicação de CEP
+        String errorMessage = ex.getMessage();
+        // Retorna um ResponseEntity com o status HTTP 409 (Conflito) e a mensagem de erro
+        return new ResponseEntity<>(errorMessage, HttpStatus.CONFLICT);
+    }
+
     // Método para outras exceções genéricas
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGlobalException(Exception ex, WebRequest request) {
