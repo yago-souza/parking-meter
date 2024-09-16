@@ -23,32 +23,22 @@ public class ParkingSpotController {
     }
 
     @GetMapping("/cep/{cep}")
-    public List<ParkingSpot> findByCep(@PathVariable String cep) {
-        return parkingSpotService.findByCep(cep);
+    public ResponseEntity<ParkingSpotDTO> findByCep(@PathVariable String cep) {
+        ParkingSpotDTO parkingSpotDTO = parkingSpotService.findByCep(cep);
+        return ResponseEntity.ok(parkingSpotDTO);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ParkingSpotDTO> findByCep(@PathVariable Long id) {
+    public ResponseEntity<ParkingSpotDTO> findById(@PathVariable Long id) {
         ParkingSpotDTO parkingSpotDTO = parkingSpotService.findById(id);
         return ResponseEntity.ok(parkingSpotDTO);
     }
 
     @PostMapping
     public ResponseEntity<String> createSpot(@RequestBody ParkingSpotDTO parkingSpotDTO) {
-        // Verificar se o ParkingSpot já existe (baseado no CEP e Location)
-        Optional<ParkingSpot> existingSpot = parkingSpotService.findByCepAndLocation(
-                parkingSpotDTO.cep(),
-                parkingSpotDTO.location()
-        );
-        if (existingSpot.isPresent()) {
-            // Se já existe, retornar um erro 409 (Conflito)
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Parking spot with the same CEP and Location already exists.");
-        }
-        // Caso contrário, criar um novo ParkingSpot
-        parkingSpotService.save(parkingSpotDTO);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body("Parking spot created successfully.");
+        // O serviço lida com a lógica de negócios
+        parkingSpotService.createSpot(parkingSpotDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Parking spot created successfully.");
     }
 
     @PutMapping("/{id}")

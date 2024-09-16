@@ -1,5 +1,6 @@
 package br.com.fiap.parking_meter.parking_meter.service;
 
+import br.com.fiap.parking_meter.parking_meter.controller.exception.BusinessException;
 import br.com.fiap.parking_meter.parking_meter.controller.exception.ControllerNotFoundException;
 import br.com.fiap.parking_meter.parking_meter.dto.ParkingSpotDTO;
 import br.com.fiap.parking_meter.parking_meter.model.ParkingSpot;
@@ -26,23 +27,34 @@ public class ParkingSpotService {
         return toDTO(parkingSpot);
     }
 
-    public List<ParkingSpot> findByCep(String cep) {
-        List<ParkingSpot> spotList = parkingSpotRepository.findByCep(cep);
-        if (spotList.isEmpty()) {
-            throw new ControllerNotFoundException("CEP: " + cep + " not found.");
-        }
-        return spotList;
+    public ParkingSpotDTO findByCep(String cep) {
+        Optional<ParkingSpotDTO> existingSpot = parkingSpotRepository.findByCep(cep);
+
+        // Se não existir, lança a exceção
+        ParkingSpotDTO parkingSpotDTO = existingSpot.orElseThrow(() -> new BusinessException("Parking spot not found."));
+        return parkingSpotDTO;
     }
 
     public Optional<ParkingSpot> findByCepAndLocation(String cep, String location) {
         return parkingSpotRepository.findByCepAndLocation(cep, location);
     }
 
-    public ParkingSpotDTO save(ParkingSpotDTO spotDTO) {
+    private ParkingSpotDTO save(ParkingSpotDTO spotDTO) {
         ParkingSpot parkingSpot = toEntity(spotDTO);
         parkingSpot = parkingSpotRepository.save(parkingSpot);
         ParkingSpotDTO parkingSpotDTO = toDTO(parkingSpot);
         return parkingSpotDTO;
+    }
+
+    public void createSpot(ParkingSpotDTO parkingSpotDTO) {
+        // Verificar se o ParkingSpot já existe (baseado no CEP e Location)
+        Optional<ParkingSpotDTO> existingSpot = parkingSpotRepository.findByCep(parkingSpotDTO.cep());
+        if (existingSpot != null) {
+            throw new BusinessException("Parking spot with the same CEP already exists.");
+        }
+
+        // Criar um novo ParkingSpot
+        this.save(parkingSpotDTO);
     }
 
     private ParkingSpotDTO toDTO(ParkingSpot parkingSpot) {
