@@ -6,5 +6,6 @@ public record TicketDTO(
         Long id,
         Long parkingSpotId,
         LocalDateTime purchasedAt,
-        LocalDateTime validUntil) {
+        LocalDateTime validUntil,
+        String licensePlate) {
 }

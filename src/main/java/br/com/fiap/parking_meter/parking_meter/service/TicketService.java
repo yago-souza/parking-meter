@@ -20,15 +20,24 @@ public class TicketService {
     @Autowired
     private ParkingSpotRepository parkingSpotRepository;
 
-    public Ticket createTicket(Long parkingSpotId, int hours) {
+    public Ticket createTicket(Long parkingSpotId, int hours, String licensePlate) {
         // Verificar se a quantidade de horas está dentro do limite de 3
         if (hours > 3) {
             throw new BusinessException("O ticket não pode ser emitido para mais de 3 horas.");
+        }
+        if (hours <= 0) {
+            throw new BusinessException("O ticket não pode ser emitido por menos de 1 hora.");
         }
 
         // Buscar a vaga correspondente pelo ID
         ParkingSpot parkingSpot = parkingSpotRepository.findById(String.valueOf(parkingSpotId))
                 .orElseThrow(() -> new ControllerNotFoundException("Vaga não encontrada"));
+
+        // Verificar se já existe um ticket ativo para a mesma placa
+        long ticketsAtivosParaPlaca = ticketRepository.countValidTicketsByLicensePlate(licensePlate, LocalDateTime.now());
+        if (ticketsAtivosParaPlaca > 0) {
+            throw new BusinessException("Já existe um ticket ativo para este veículo.");
+        }
 
         // Verificar a quantidade de tickets válidos (tickets cujo 'validUntil' ainda não passou)
         long ticketsValidos = ticketRepository.countValidTickets(parkingSpotId, LocalDateTime.now());
@@ -42,6 +51,7 @@ public class TicketService {
         newTicket.setParkingSpot(parkingSpot);
         newTicket.setPurchasedAt(LocalDateTime.now());
         newTicket.setValidUntil(LocalDateTime.now().plusHours(hours));
+        newTicket.setLicensePlate(licensePlate);
 
         return ticketRepository.save(newTicket);
     }
@@ -51,7 +61,8 @@ public class TicketService {
                 ticket.getId(),
                 ticket.getParkingSpot().getId(),
                 ticket.getPurchasedAt(),
-                ticket.getValidUntil()
+                ticket.getValidUntil(),
+                ticket.getLicensePlate()
         );
     }
     public Ticket toEntity(TicketDTO ticketDTO) {
@@ -61,6 +72,7 @@ public class TicketService {
         ticket.setParkingSpot(parkingSpot);
         ticket.setPurchasedAt(ticketDTO.purchasedAt());
         ticket.setValidUntil(ticketDTO.validUntil());
+        ticket.setLicensePlate(ticketDTO.licensePlate());
         return ticket;
     }
 }

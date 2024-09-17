@@ -15,4 +15,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query("SELECT COUNT(t) FROM Ticket t WHERE t.parkingSpot.id = :parkingSpotId AND t.validUntil > :currentTime")
     long countValidTickets(@Param("parkingSpotId") Long parkingSpotId, @Param("currentTime") LocalDateTime currentTime);
 
+    @Query("SELECT COUNT(t) FROM Ticket t WHERE t.licensePlate = :licensePlate AND t.validUntil > :currentTime")
+    long countValidTicketsByLicensePlate(@Param("licensePlate") String licensePlate, @Param("currentTime") LocalDateTime currentTime);
+
 }
