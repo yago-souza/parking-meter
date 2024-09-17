@@ -49,12 +49,13 @@ public class ParkingSpotService {
     public void createSpot(ParkingSpotDTO parkingSpotDTO) {
         // Verificar se o ParkingSpot já existe (baseado no CEP e Location)
         Optional<ParkingSpotDTO> existingSpot = parkingSpotRepository.findByCep(parkingSpotDTO.cep());
-        if (existingSpot != null) {
+        // Se o estacionamento já existir, lança a exceção BusinessException
+        if (existingSpot.isPresent()) {
             throw new BusinessException("Parking spot with the same CEP already exists.");
         }
-
-        // Criar um novo ParkingSpot
-        this.save(parkingSpotDTO);
+        // Converter o DTO para entidade e salvar o novo estacionamento
+        ParkingSpot parkingSpot = toEntity(parkingSpotDTO);
+        parkingSpotRepository.save(parkingSpot);
     }
 
     private ParkingSpotDTO toDTO(ParkingSpot parkingSpot) {
