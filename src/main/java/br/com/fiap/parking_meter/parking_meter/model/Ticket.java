@@ -14,15 +14,17 @@ public class Ticket {
     private ParkingSpot parkingSpot;
     private LocalDateTime purchasedAt;
     private LocalDateTime validUntil;
+    private String licensePlate;
 
     public Ticket() {
     }
 
-    public Ticket(Long id, ParkingSpot parkingSpot, LocalDateTime purchaseAt, LocalDateTime validUntil) {
+    public Ticket(Long id, ParkingSpot parkingSpot, LocalDateTime purchaseAt, LocalDateTime validUntil, String licensePlate) {
         this.id = id;
         this.parkingSpot = parkingSpot;
         this.purchasedAt = purchaseAt;
         this.validUntil = validUntil;
+        this.licensePlate = licensePlate;
     }
 
     public Long getId() {
@@ -55,5 +57,13 @@ public class Ticket {
 
     public void setValidUntil(LocalDateTime validUntil) {
         this.validUntil = validUntil;
+    }
+
+    public String getLicensePlate() {
+        return licensePlate;
+    }
+
+    public void setLicensePlate(String licensePlate) {
+        this.licensePlate = licensePlate;
     }
 }

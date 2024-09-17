@@ -16,9 +16,10 @@ public class TicketController {
     @PostMapping
     public ResponseEntity<Ticket> createTicket(
             @RequestParam Long parkingSpotId,
-            @RequestParam int hours) {
+            @RequestParam int hours,
+            @RequestParam String licensePlate) {
 
-        Ticket newTicket = ticketService.createTicket(parkingSpotId, hours);
+        Ticket newTicket = ticketService.createTicket(parkingSpotId, hours, licensePlate);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(newTicket);
     }
