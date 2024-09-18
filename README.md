@@ -1,2 +1,6 @@
-# parking-meter
-Projeto de estacionamento rotativo
+todo: Finalizar dockerfile
+      README.MD
+      SWAGGER - OPENAPI
+      PDF
+      
+      
